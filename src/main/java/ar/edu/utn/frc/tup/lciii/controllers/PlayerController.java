@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -17,6 +18,14 @@ public class PlayerController {
 
     @Autowired
     private PlayerService playerService;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Player>> getPlayers(){
+        List<Player> players = playerService.getPlayers();
+        return ResponseEntity.ok(players);
+
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Player> getById(@PathVariable Long id){
@@ -33,12 +42,32 @@ public class PlayerController {
         }else {
             return ResponseEntity.ok(playerSaved);
         }
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean>deletePlayerByID(@PathVariable Long id){
+        boolean result= playerService.deletePlayer(id);
+        return ResponseEntity.ok(result);
+    }
 
+    @DeleteMapping("/all")
+    public ResponseEntity<Boolean>deleteAllPlayer(){
+        boolean result= playerService.deleteAllPlayers();
+        return ResponseEntity.ok(result);
     }
 
 
+    @PutMapping("/")
+    public ResponseEntity<Player>upDatePlayer(@RequestBody Player player){
 
+        Player playerUpdated= playerService.upDatePlayer(player);
+        if(Objects.isNull(playerUpdated)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No puede actualizar un jugador con esos datos, verifique e intentelo nuevamente");
+        }else {
+            return ResponseEntity.ok(playerUpdated);
+        }
+
+    }
 
 
 
